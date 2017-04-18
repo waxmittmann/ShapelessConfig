@@ -42,6 +42,6 @@ trait ConfigParserBuilder[IN] { self =>
         self.readAs[FINAL](in).map(_ :: HNil)
     }
 
-  def toConfigReader[FINAL](implicit generic: Generic.Aux[FINAL, OUT]): ConfigParser[IN, FINAL] =
+  def toConfigParser[FINAL](implicit generic: Generic.Aux[FINAL, OUT]): ConfigParser[IN, FINAL] =
     (in: IN) => readAs[FINAL](in)
 }

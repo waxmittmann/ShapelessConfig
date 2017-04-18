@@ -3,10 +3,9 @@ package shapelessconfig
 import org.specs2.Specification
 import shapeless.{ HNil, :: }
 import shapelessconfig.ConfigParserBuilder.\
-import shapelessconfig.MapConfigParserBuilderCompanion.{int, string}
 
 import shapelessconfig.ConfigParserBuilderOps._
-import shapelessconfig.MapConfig._
+import shapelessconfig.FromMapConfig._
 
 class ConfigReaderEndToEndSpec extends Specification {
 
@@ -69,7 +68,7 @@ class ConfigReaderEndToEndSpec extends Specification {
        \("base")(
          dbPartBuilder +
          logPartBuilder
-       ).toConfigReader[AllConfig]
+       ).toConfigParser[AllConfig]
 
     val in =
       Map("base" ->

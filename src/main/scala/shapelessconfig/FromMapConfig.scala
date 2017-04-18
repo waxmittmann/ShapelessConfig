@@ -29,7 +29,7 @@ case class MapConfigParserBuilder[S](key: String, t: String => Either[Err, S]) e
     }
 }
 
-object MapConfigParserBuilderCompanion {
+trait MapConfigParserBuilderSyntax {
   def unit[S](key: String, t: String => Either[Err, S]): MapConfigParserBuilder[S] { type OUT = S :: HNil } =
     MapConfigParserBuilder(key, t)
 
@@ -38,25 +38,19 @@ object MapConfigParserBuilderCompanion {
 
   def string(key: String): MapConfigParserBuilder[String] { type OUT = String :: HNil } =
     MapConfigParserBuilder(key, Right(_))
-}
 
-object NarrowMapInput {
-  implicit def m(in: Map[String, _], key: String): Either[Err, Map[String, _]] =
+  implicit def narrow(in: Map[String, _], key: String): Either[Err, Map[String, _]] =
     for {
       v <- in.get(key).toRight(Err(s"Key $key not found in $in"))
-      _ <- (v.isInstanceOf[Map[String, _]]).some.toRight(Err("Is not a map"))
-      newI = v.asInstanceOf[Map[String, _]]
+      newI <- Try(v.asInstanceOf[Map[String, _]]).toEither.left
+                .map(t => Err(s"Failed to cast ${v.getClass} to Map[String, _].\n${t.getMessage}"))
     } yield
       newI
 }
 
-object MapConfig {
+object FromMapConfig extends MapConfigParserBuilderSyntax {
   type INPUT_SELECT = String
   type INPUT = Map[INPUT_SELECT, _]
 
-  implicit val narrowMapInput = NarrowMapInput.m _
-
-  implicit val configParserBuilderCompanion = MapConfigParserBuilderCompanion
-
-  implicit val configParserBuilder  = MapConfigParserBuilder
+  implicit val configParserBuilder = MapConfigParserBuilder
 }

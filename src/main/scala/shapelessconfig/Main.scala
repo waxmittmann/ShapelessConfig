@@ -2,7 +2,7 @@ package shapelessconfig
 
 import ConfigParserBuilder.\
 import ConfigParserBuilderOps.ConfigParserBuilderOpsTc
-import MapConfigParserBuilderCompanion._
+import shapelessconfig.FromMapConfig._
 
 object Main {
 
@@ -12,9 +12,6 @@ object Main {
 
     case class LogConfig(file: String, level: Int)
     case class AllConfig(db: DBConfig, log: LogConfig)
-
-    import MapConfigParserBuilderCompanion._
-    implicit val m = NarrowMapInput.m(_, _)
 
     if (true) {
 
@@ -29,7 +26,7 @@ object Main {
               string("file") +
                 int("level")
             }.to[LogConfig]
-        }.toConfigReader[AllConfig]
+        }.toConfigParser[AllConfig]
 
       /*
        Note / Learning:
@@ -51,7 +48,7 @@ object Main {
           int("level")
       }.to[LogConfig]
 
-      val all = \("base") { dbPart + logPart }.toConfigReader[AllConfig]
+      val all = \("base") { dbPart + logPart }.toConfigParser[AllConfig]
 
       println(all.read(Map("base" ->
         //      println(asOneBigBlob.reader(Map("base" ->
@@ -71,8 +68,4 @@ object Main {
       )))
     }
   }
-
-
-
-
 }
