@@ -24,19 +24,13 @@ object FromMapConfig extends FromConfig[Map[String, _]] {
     } yield
       v
 
-  def int(key: String): ConfigParserBuilderInstance[Int] { type OUT = Int :: HNil } =
-    instance[Int](
-      key,
-      (in, key) => readFromMap(in, key)
-                .flatMap(s => Try(s.toInt).toEither.left
-                .map(t => Err(s"Failed to parse to int: ${t.getMessage}")))
-    )
+  implicit val intFromInput: (INPUT, INPUT_SELECT) => Either[Err, Int] =
+    (in, key) => readFromMap(in, key)
+      .flatMap(s => Try(s.toInt).toEither.left
+        .map(t => Err(s"Failed to parse to int: ${t.getMessage}")))
 
-  def string(key: String): ConfigParserBuilderInstance[String] { type OUT = String :: HNil } =
-    instance[String](
-      key,
-      (in, key) => readFromMap(in, key)
-    )
+  implicit val stringFromInput: (INPUT, INPUT_SELECT) => Either[Err, String] =
+    (in, key) => readFromMap(in, key)
 
   implicit def narrow(in: Map[String, _], key: String): Either[Err, Map[String, _]] =
     for {

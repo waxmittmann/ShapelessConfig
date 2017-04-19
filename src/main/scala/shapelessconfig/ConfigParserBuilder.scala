@@ -1,6 +1,6 @@
 package shapelessconfig
 
-import shapeless.{Generic, HList, HNil, ::}
+import shapeless.{::, Generic, HList, HNil}
 
 object ConfigParserBuilder {
   type Aux[T, H] = ConfigParserBuilder[T] { type OUT = H }
@@ -24,6 +24,22 @@ object ConfigParserBuilder {
         } yield
           i2
     }
+
+  def int[IN](key: String)(implicit t: (IN, String) => Either[Err, Int]): ConfigParserBuilder.Aux[IN, Int :: HNil] { type OUT = Int :: HNil } =
+    ConfigParserBuilderInstance(key, t)
+
+  def string[IN](key: String)(implicit t: (IN, String) => Either[Err, String]): ConfigParserBuilder.Aux[IN, String :: HNil] { type OUT = String :: HNil } =
+    ConfigParserBuilderInstance(key, t)
+
+  def instance[S, INPUT](key: String, t: (INPUT, String) => Either[Err, S]) =
+    ConfigParserBuilderInstance(key, t)
+
+  case class ConfigParserBuilderInstance[S, INPUT](key: String, t: (INPUT, String) => Either[Err, S]) extends ConfigParserBuilder[INPUT] {
+    type OUT = S :: HNil
+
+    override def read(in: INPUT): Either[Err, OUT] =
+      t(in, key).map(_ :: HNil)
+  }
 }
 
 trait ConfigParserBuilder[IN] { self =>

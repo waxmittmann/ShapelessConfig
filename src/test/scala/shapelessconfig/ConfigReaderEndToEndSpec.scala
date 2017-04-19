@@ -2,7 +2,7 @@ package shapelessconfig
 
 import org.specs2.Specification
 import shapeless.{ HNil, :: }
-import shapelessconfig.ConfigParserBuilder.\
+import shapelessconfig.ConfigParserBuilder._
 
 import shapelessconfig.ConfigParserBuilderOps._
 import shapelessconfig.instances.FromMapConfig._

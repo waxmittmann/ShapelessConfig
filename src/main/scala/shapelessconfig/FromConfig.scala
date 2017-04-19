@@ -16,9 +16,9 @@ trait FromConfig[I] { self =>
   def instance[S](key: INPUT_SELECT, t: (INPUT, INPUT_SELECT) => Either[Err, S]) =
     ConfigParserBuilderInstance(key, t)
 
-  def int(key: String): ConfigParserBuilder[INPUT] { type OUT = Int :: HNil }
+  implicit val intFromInput: (INPUT, INPUT_SELECT) => Either[Err, Int]
 
-  def string(key: String): ConfigParserBuilder[INPUT] { type OUT = String :: HNil }
+  implicit val stringFromInput: (INPUT, INPUT_SELECT) => Either[Err, String]
 
   implicit def narrow(in: INPUT, key: INPUT_SELECT): Either[Err, INPUT]
 }

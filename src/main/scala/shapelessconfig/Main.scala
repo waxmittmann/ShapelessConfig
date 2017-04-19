@@ -1,6 +1,6 @@
 package shapelessconfig
 
-import ConfigParserBuilder.\
+import ConfigParserBuilder._
 import ConfigParserBuilderOps.ConfigParserBuilderOpsTc
 import com.typesafe.config.{Config, ConfigFactory}
 import scala.collection.JavaConverters._
@@ -17,19 +17,18 @@ object Main {
 
     if (false) {
       import shapelessconfig.instances.FromMapConfig._
-      import shapelessconfig.instances.FromMapConfig.{int, string}
 
       val asOneBigBlob: ConfigParser[Map[String, _], AllConfig] =
         \("base") {
           \("db") {
             string("user") +
-              string("pass") +
-              string("url")
+            string("pass") +
+            string("url")
           }.to[DBConfig] +
             \("log") {
-              string("file") +
-                int("level")
-            }.to[LogConfig]
+            string("file") +
+            int("level")
+          }.to[LogConfig]
         }.toConfigParser[AllConfig]
 
       /*
