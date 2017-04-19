@@ -12,7 +12,8 @@ import shapelessconfig.FromConfig
   * To use, 'import FromMapConfig._'
   */
 object FromMapConfig extends FromConfig[Map[String, _]] {
-  override def read[S](in: Map[String, _], key: String, t: String => Either[Err, S]): Either[Err, S] =
+
+  def readFromMap(in: INPUT, key: INPUT_SELECT): Either[Err, String] =
     for {
       rv   <- in.get(key).toRight(Err(s"Map did not contain $key"))
 
@@ -20,20 +21,22 @@ object FromMapConfig extends FromConfig[Map[String, _]] {
 
       // must work because above
       v = rv.asInstanceOf[String]
-
-      cv  <- t(v)
     } yield
-      cv
+      v
 
-  def unit[S](key: String, t: String => Either[Err, S]): ConfigParserBuilderInstance[S] { type OUT = S :: HNil } =
-    ConfigParserBuilderInstance[S](key, t)
-
-  def int(key: String): ConfigParserBuilderInstance[Int] { type OUT = Int :: HNil } = {
-    ConfigParserBuilderInstance[Int](key, i => Try(i.toInt).toEither.left.map(t => Err(s"Failed to parse to int: ${t.getMessage}")))
-  }
+  def int(key: String): ConfigParserBuilderInstance[Int] { type OUT = Int :: HNil } =
+    ConfigParserBuilderInstance[Int](
+      key,
+      (in, key) => readFromMap(in, key)
+                .flatMap(s => Try(s.toInt).toEither.left
+                .map(t => Err(s"Failed to parse to int: ${t.getMessage}")))
+    )
 
   def string(key: String): ConfigParserBuilderInstance[String] { type OUT = String :: HNil } =
-    ConfigParserBuilderInstance[String](key, Right(_))
+    ConfigParserBuilderInstance[String](
+      key,
+      (in, key) => readFromMap(in, key)
+    )
 
   implicit def narrow(in: Map[String, _], key: String): Either[Err, Map[String, _]] =
     for {
