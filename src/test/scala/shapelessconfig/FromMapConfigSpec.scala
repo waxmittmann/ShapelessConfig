@@ -5,7 +5,7 @@ import org.specs2.Specification
 import shapeless.{ HNil, :: }
 import shapelessconfig.ConfigParserBuilder.\
 
-import shapelessconfig.FromMapConfig._
+import shapelessconfig.instances.FromMapConfig._
 
 class FromMapConfigSpec extends Specification {
   override def is = s2"""

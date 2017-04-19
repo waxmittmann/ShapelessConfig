@@ -2,7 +2,9 @@ package shapelessconfig
 
 import ConfigParserBuilder.\
 import ConfigParserBuilderOps.ConfigParserBuilderOpsTc
-import shapelessconfig.FromMapConfig._
+import com.typesafe.config.{Config, ConfigFactory}
+import scala.collection.JavaConverters._
+import java.util
 
 object Main {
 
@@ -13,7 +15,9 @@ object Main {
     case class LogConfig(file: String, level: Int)
     case class AllConfig(db: DBConfig, log: LogConfig)
 
-    if (true) {
+    if (false) {
+      import shapelessconfig.instances.FromMapConfig._
+      import shapelessconfig.instances.FromMapConfig.{int, string}
 
       val asOneBigBlob: ConfigParser[Map[String, _], AllConfig] =
         \("base") {
@@ -66,6 +70,63 @@ object Main {
             )
         )
       )))
+    }
+
+
+    if (true) {
+      import shapelessconfig.instances.FromTypesafeConfig._
+
+      val dbPart =
+        \("db") {
+          string("user") +
+            string("pass") +
+            string("url")
+        }.to[DBConfig]
+
+      val logPart = \("log") {
+        string("file") +
+          int("level")
+      }.to[LogConfig]
+
+      val all = \("base") { dbPart + logPart }.toConfigParser[AllConfig]
+
+//      val config = ConfigFactory.parseMap(
+//       Map("base" ->
+//         Map(
+//           "db" ->
+//             Map(
+//               "user"  -> "Harry",
+//               "pass"  -> "Schmoe",
+//               "url"   -> "http://www.goo.com"
+//             ),
+//           "log" ->
+//             Map(
+//               "file"  -> "blah.log",
+//               "level" -> "3"
+//             )
+//         )
+//       ).asJava
+//      )
+
+      val base = new util.HashMap[String, Object]()
+
+      val base2 = new util.HashMap[String, Object]()
+      base.put("base", base2)
+
+      val db = new util.HashMap[String, Object]()
+      base2.put("db", db)
+      db.put("user", "Harry")
+      db.put("pass", "Schmoe")
+      db.put("url", "www.google.com")
+
+      val log = new util.HashMap[String, Object]()
+      base2.put("log", log)
+      log.put("file", "blah.log")
+      log.put("level", new Integer(3))
+
+      val config = ConfigFactory.parseMap(base)
+
+      println(all.read(config))
     }
   }
 }

@@ -1,10 +1,10 @@
-package shapelessconfig
+package shapelessconfig.instances
 
 import scala.util.Try
 
-import shapeless.{::, HNil}
 import cats.syntax.all._
-import shapelessconfig.FromConfig
+import shapeless.{::, HNil}
+import shapelessconfig.{Err, FromConfig}
 
 /**
   * Components for reading config from nested maps.
@@ -25,7 +25,7 @@ object FromMapConfig extends FromConfig[Map[String, _]] {
       v
 
   def int(key: String): ConfigParserBuilderInstance[Int] { type OUT = Int :: HNil } =
-    ConfigParserBuilderInstance[Int](
+    instance[Int](
       key,
       (in, key) => readFromMap(in, key)
                 .flatMap(s => Try(s.toInt).toEither.left
@@ -33,7 +33,7 @@ object FromMapConfig extends FromConfig[Map[String, _]] {
     )
 
   def string(key: String): ConfigParserBuilderInstance[String] { type OUT = String :: HNil } =
-    ConfigParserBuilderInstance[String](
+    instance[String](
       key,
       (in, key) => readFromMap(in, key)
     )

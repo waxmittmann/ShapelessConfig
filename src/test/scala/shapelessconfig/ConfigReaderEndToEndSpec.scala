@@ -5,7 +5,7 @@ import shapeless.{ HNil, :: }
 import shapelessconfig.ConfigParserBuilder.\
 
 import shapelessconfig.ConfigParserBuilderOps._
-import shapelessconfig.FromMapConfig._
+import shapelessconfig.instances.FromMapConfig._
 
 class ConfigReaderEndToEndSpec extends Specification {
 

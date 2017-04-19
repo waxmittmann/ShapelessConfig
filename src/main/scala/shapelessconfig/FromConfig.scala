@@ -13,9 +13,12 @@ trait FromConfig[I] { self =>
       t(in, key).map(_ :: HNil)
   }
 
+  def instance[S](key: INPUT_SELECT, t: (INPUT, INPUT_SELECT) => Either[Err, S]) =
+    ConfigParserBuilderInstance(key, t)
+
   def int(key: String): ConfigParserBuilder[INPUT] { type OUT = Int :: HNil }
 
   def string(key: String): ConfigParserBuilder[INPUT] { type OUT = String :: HNil }
 
-  implicit def narrow(in: Map[String, _], key: String): Either[Err, Map[String, _]]
+  implicit def narrow(in: INPUT, key: INPUT_SELECT): Either[Err, INPUT]
 }
