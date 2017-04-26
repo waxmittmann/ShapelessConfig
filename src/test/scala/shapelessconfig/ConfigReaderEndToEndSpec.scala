@@ -17,14 +17,14 @@ class ConfigReaderEndToEndSpec extends Specification {
     """.stripMargin
 
   val dbPartBuilder: ConfigParserBuilder.Aux[INPUT, DBConfig :: HNil] =
-    \("db") {
+    >>("db") {
       string("user") +
       string("pass") +
       string("url")
     }.to[DBConfig]
 
   val logPartBuilder: ConfigParserBuilder.Aux[INPUT, LogConfig :: HNil] =
-    \("log") {
+    >>("log") {
       string("file") +
       int("level")
     }.to[LogConfig]
@@ -65,7 +65,7 @@ class ConfigReaderEndToEndSpec extends Specification {
 
   def shouldReadMergedConfig = {
     val mergedReader =
-       \("base")(
+      >>("base")(
          dbPartBuilder +
          logPartBuilder
        ).toConfigParser[AllConfig]

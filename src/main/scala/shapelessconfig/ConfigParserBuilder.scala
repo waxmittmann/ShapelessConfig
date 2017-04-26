@@ -13,7 +13,7 @@ object ConfigParserBuilder {
     }
   }
 
-  def \[IN, T](transformerInput: T)(other: ConfigParserBuilder[IN])(implicit inTransformer: (IN, T) => Either[Err, IN]): ConfigParserBuilder.Aux[IN, other.OUT] =
+  def >>[IN, T](transformerInput: T)(other: ConfigParserBuilder[IN])(implicit inTransformer: (IN, T) => Either[Err, IN]): ConfigParserBuilder.Aux[IN, other.OUT] =
     new ConfigParserBuilder[IN] {
       override type OUT = other.OUT
 

@@ -16,8 +16,8 @@ class FromMapConfigSpec extends Specification {
     val input = Map("a" -> "b")
 
     val result: Either[Err, ::[String, HNil]] =
-      \("a") {
-        \("b") {
+      >>("a") {
+        >>("b") {
           string("hello")
         }
       }.read(input)

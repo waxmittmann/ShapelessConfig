@@ -19,13 +19,13 @@ object Main {
       import shapelessconfig.instances.FromMapConfig._
 
       val asOneBigBlob: ConfigParser[Map[String, _], AllConfig] =
-        \("base") {
-          \("db") {
+        >>("base") {
+          >>("db") {
             string("user") +
             string("pass") +
             string("url")
           }.to[DBConfig] +
-            \("log") {
+            >>("log") {
             string("file") +
             int("level")
           }.to[LogConfig]
@@ -40,18 +40,18 @@ object Main {
        So careful with type signatures. Should create aux type.
       */
       val dbPart =
-      \("db") {
+      >>("db") {
         string("user") +
           string("pass") +
           string("url")
       }.to[DBConfig]
 
-      val logPart = \("log") {
+      val logPart = >>("log") {
         string("file") +
           int("level")
       }.to[LogConfig]
 
-      val all = \("base") { dbPart + logPart }.toConfigParser[AllConfig]
+      val all = >>("base") { dbPart + logPart }.toConfigParser[AllConfig]
 
       println(all.read(Map("base" ->
         //      println(asOneBigBlob.reader(Map("base" ->
@@ -76,18 +76,18 @@ object Main {
       import shapelessconfig.instances.FromTypesafeConfig._
 
       val dbPart =
-        \("db") {
+        >>("db") {
           string("user") +
-            string("pass") +
-            string("url")
+          string("pass") +
+          string("url")
         }.to[DBConfig]
 
-      val logPart = \("log") {
+      val logPart = >>("log") {
         string("file") +
-          int("level")
+        int("level")
       }.to[LogConfig]
 
-      val all = \("base") { dbPart + logPart }.toConfigParser[AllConfig]
+      val all = >>("base") { dbPart + logPart }.toConfigParser[AllConfig]
 
 //      val config = ConfigFactory.parseMap(
 //       Map("base" ->
